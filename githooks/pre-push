@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
+
+LAMBA_FUNC_NAME=$(git config --local lambda.functionName)
+
+if [ -z "$LAMBA_FUNC_NAME" ]
+then
+      echo "You should set your LAMBDA FUNCTION NAME in local git config of this repository."
+      echo "Usage: git config --local lambda.functionName <YOURLAMBDAFUNCTIONNAME>"
+fi
+
+if (command -v aws2  >/dev/null 2>&1); then 
+    AWSCLI=aws2
+elif (command -v aws  >/dev/null 2>&1); then 
+    AWSCLI=aws
+else
+    echo "AWS CLI is not installed. Please visit https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html"
+    exit 1; 
+fi
+
+rm $LAMBA_FUNC_NAME.zip
+zip -r $LAMBA_FUNC_NAME.zip *
+
+LAMBDA_STATUS=$($AWSCLI lambda update-function-code --function-name  $LAMBA_FUNC_NAME  --zip-file fileb://$LAMBA_FUNC_NAME.zip | jq '.LastUpdateStatus')
+if [ $LAMBDA_STATUS = '"Successful"' ];
+then
+    echo
+    echo "Successfully uploaded to AWS Lambda Function:$LAMBA_FUNC_NAME. LastUpdateStatus as $LAMBDA_STATUS."
+    exit 0;
+else
+    echo
+    echo "Failed to upload to AWS Lambda Function:$LAMBA_FUNC_NAME. LastUpdateStatus as $LAMBDA_STATUS."
+    echo "Please check any errors are there on process."
+    echo "If you are a first time user, Please make sure you have installed \"jq\" and \"aws2\". The AWS2 CLI should be configured with your own account."  
+fi
+echo
+exit 1;

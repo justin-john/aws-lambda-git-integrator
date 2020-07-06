@@ -1,0 +1,77 @@
+#!/bin/sh
+ACTION=${1?"Missing Argument: \"pullsync\" or \"synconly\" or \"pullonly\" should be passed as first argument."}
+BRANCH=${2:- $(git symbolic-ref --short HEAD)}
+
+LAMBA_FUNC_NAME=$(git config --local lambda.functionName)
+
+if [ -z "$LAMBA_FUNC_NAME" ]
+then
+      echo "You should set your LAMBDA FUNCTION NAME in local git config of this repository."
+      echo "Usage: git config --local lambda.functionName <YOURLAMBDAFUNCTIONNAME>"
+      exit 1;
+fi
+
+if (command -v aws2  >/dev/null 2>&1); then 
+    AWSCLI=aws2
+elif (command -v aws  >/dev/null 2>&1); then 
+    AWSCLI=aws
+else
+    echo "AWS CLI is not installed. Please visit https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html"
+    exit 1;
+fi
+
+beautifyPrint()
+{
+    [ "top" = ${2:-"top"} ] && echo
+    echo $1
+    [ "bottom" = ${2:-"bottom"} ] && echo
+}
+
+pullFromLambda()
+{
+    $AWSCLI lambda get-function --function-name $LAMBA_FUNC_NAME --query 'Code.Location' | xargs wget -O $LAMBA_FUNC_NAME.zip
+    if [ $? -ne 0 ]
+    then 
+        beautifyPrint "Failed to Sync with AWS Lambda Function: $LAMBA_FUNC_NAME. Please take a look on AWS Lambda Function: $LAMBA_FUNC_NAME and carry on."  
+    else 
+        unzip -o -q $LAMBA_FUNC_NAME.zip
+        beautifyPrint "SYNCED CODE SUCCESSFULLY with AWS Lambda Function: $LAMBA_FUNC_NAME. Check every changeset choose accordingly and commit." top
+        beautifyPrint "If synced code of AWS Lambda Function: $LAMBA_FUNC_NAME is old/unnecessary for latest git, clean it with \"git checkout .\" command." bottom
+    fi
+    exit 0;
+}
+
+case $ACTION in 
+    pullsync)
+        beautifyPrint "Pulling from BRANCH: ${BRANCH} AND FOLLOWS A SYNC FROM AWS Lambda Function: $LAMBA_FUNC_NAME."
+        git pull origin ${BRANCH}
+        if [ $? -ne 0 ]
+        then 
+            echo "Failed to pull from GIT. Try again"  
+        else 
+            CONFLICTS=$(git ls-files -u | wc -l)
+            if [ "$CONFLICTS" -gt 0 ] ;
+            then
+                beautifyPrint "There is a conflict." top
+                beautifyPrint "You should first resolve this conflict and do a mandatory commit." false
+                beautifyPrint "After commit, do a mandatory "./lambda pullsync" again or a "./lambda synconly". If don't do this, there won't be any sync with AWS Lambda Function and your code" bottom
+                exit 1;
+            else 
+                beautifyPrint "Starting Syncing with AWS Lambda Function: $LAMBA_FUNC_NAME."
+                pullFromLambda
+            fi
+        fi 
+        break ;;
+
+    synconly)
+        beautifyPrint "Syncing only from AWS Lambda Function: $LAMBA_FUNC_NAME."
+        pullFromLambda
+        break ;;
+
+    pullonly|fetch)
+        beautifyPrint "Pulling only from BRANCH: ${BRANCH} "
+        git pull origin ${BRANCH}
+        break ;;
+
+esac
+exit 0;

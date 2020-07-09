@@ -1,5 +1,5 @@
-### AWS LAMBDA GIT INTEGRATOR
-Integrate AWS Lambda functions to a Git repo. This will help to have git repo for your AWS Lambda function. This repo will help you do git pull with aws lambda function code download and aws lambda function code upload with git push parallely. So you can manage to have aws lambda and git for same for project.
+### [AWS LAMBDA](https://aws.amazon.com/lambda/) [GIT](https://git-scm.com/) INTEGRATOR
+Integrate [AWS LAMBDA Function](https://aws.amazon.com/lambda/) to a [GIT](https://git-scm.com/) repository. The AWS Lambda Git integrator will help to integrate GIT Repository to your AWS Lambda Function. This software will do GIT pull with AWS Lambda Function code download and AWS Lambda Function code upload with GIT push parallely(See [here](https://github.com/justin-john/aws-lambda-git-integrator#usage-and-how-it-works)). So you can manage to have Version Control System integrated with AWS Lambda function for the project.
 
 ### PREREQUISITES
 AWS2 CLI need to configured in your system. This needs active AWS account to configure.
@@ -10,7 +10,7 @@ You should set couple of local git configs one for setting up your lambda functi
 git config --local lambda.functionName <YourLambdaFunctionName>
 git config --local core.hooksPath githooks/
 ```
-You can add `pre-push`(located inside "githooks/pre-push") hook in default git hooks folder `.git/hooks` and setting git hook path(`git config --local core.hooksPath githooks/`) can be avoided.
+You can add `pre-push`(located inside "githooks/pre-push") hook inside the default GIT hooks folder `.git/hooks` and setting local GIT hook path(`git config --local core.hooksPath githooks/`) can be avoided.
 
 #### SOFTWARES REQUIRED
 * aws2/aws
@@ -18,16 +18,17 @@ You can add `pre-push`(located inside "githooks/pre-push") hook in default git h
 * zip   (This might be preinstalled as starter kit of OS)
 
 #### GET STARTED 
-* Create an aws Lambda Function/ Should have an existing lambda function that needs git integration.
-* Copy `lambda` and `githooks` of this repo in a folder with same name as your AWS Lambda Function name.
-* Initialize new git repository and set up all local git configs and create a remote GIT repository.
+* Create an AWS Lambda Function or Should have an existing AWS Lambda function that needs git integration.
+* Copy `lambda` and `githooks` of this repository in a folder with same name as your AWS Lambda Function name.
+* Initialize an new git repository and set up all local git configs and create a remote GIT repository.
 * Do a `./lambda pullsync` and follows a git commit and push to remote GIT server.
 
 ### USAGE AND HOW IT WORKS
 
 ##### CODE PULL
 GIT PULL + AWS LAMBDA FUNCTION CODE DOWNLOAD - Recommended.
-It'll do git pull first, then follows code download from aws lambda function.
+
+It'll first do a GIT pull and then follows code download from AWS Lambda function.
 ```
 ./lambda pullsync
 ```

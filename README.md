@@ -1,4 +1,4 @@
-### [AWS LAMBDA](https://aws.amazon.com/lambda/) [GIT](https://git-scm.com/) INTEGRATOR
+### AWS LAMBDA GIT INTEGRATOR
 Integrate [AWS LAMBDA Function](https://aws.amazon.com/lambda/) to a [GIT](https://git-scm.com/) repository. The AWS Lambda Git integrator will help to integrate GIT Repository to your AWS Lambda Function. This software will do GIT pull with AWS Lambda Function code download and AWS Lambda Function code upload with GIT push parallely(See [here](https://github.com/justin-john/aws-lambda-git-integrator#usage-and-how-it-works)). So you can manage to have Version Control System integrated with AWS Lambda function for the project.
 
 ### PREREQUISITES
@@ -43,6 +43,10 @@ This is normal git commit. After commit, you can do `./lambda pullsync` to know 
 This is normal git push. A pre-push commit hook is attached, so when you do git push, the pre-push git hook will upload code to AWS Lambda Function and follows git push to repo.
 
 NB: Please make sure lambda and pre-push are executable files.
+
+#### OS Supported
+* Linux
+* Mac OS (Not Tested, Should Work. If anybody of you like to contribute in this project by testing in Mac OS, please test and let me know your report by creating an issue/pull request. Don't have MAC machine to test. :disappointed:)
 
 ## License
 

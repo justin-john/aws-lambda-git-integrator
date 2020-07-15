@@ -2,7 +2,7 @@
 Integrate [AWS LAMBDA Function](https://aws.amazon.com/lambda/) to a [GIT](https://git-scm.com/) repository. The AWS Lambda Git integrator will help to integrate GIT Repository to your AWS Lambda Function. This software will do GIT pull with AWS Lambda Function code download and AWS Lambda Function code upload with GIT push parallely(See [here](https://github.com/justin-john/aws-lambda-git-integrator#usage-and-how-it-works)). So you can manage to have Version Control System integrated with AWS Lambda function for the project.
 
 ### PREREQUISITES
-AWS2 CLI need to configured in your system. This needs active AWS account to configure.
+[AWS2 CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) need to be configured in your system. This needs active AWS account to configure.
 You should set couple of local git configs one for setting up your lambda function name and other setting git hook path. Please make sure set only local git config that applies to your current git repository.
 
 #### SETTING GIT LOCAL CONFIGS
@@ -10,7 +10,7 @@ You should set couple of local git configs one for setting up your lambda functi
 git config --local lambda.functionName <YourLambdaFunctionName>
 git config --local core.hooksPath githooks/
 ```
-You can add `pre-push`(located inside "githooks/pre-push") hook inside the default GIT hooks folder `.git/hooks` and setting local GIT hook path(`git config --local core.hooksPath githooks/`) can be avoided.
+You can add `pre-push`(located inside "githooks/pre-push") hook file inside the default GIT hooks folder `.git/hooks` and setting local GIT hook path(`git config --local core.hooksPath githooks/`) can be avoided.
 
 #### SOFTWARES REQUIRED
 * aws2/aws
